@@ -144,21 +144,11 @@ func (w *Writer) open() error {
 				call.UserProject(w.o.userProject)
 			}
 			setClientHeader(call.Header())
-			// If the chunk size is zero, then no chunking is done on the Reader,
-			// which means we cannot retry: the first call will read the data, and if
-			// it fails, there is no way to re-read.
-			if w.ChunkSize == 0 {
-				resp, err = call.Do()
-			} else {
-				// We will only retry here if the initial POST, which obtains a URI for
-				// the resumable upload, fails with a retryable error. The upload itself
-				// has its own retry logic.
-				err = runWithRetry(w.ctx, func() error {
-					var err2 error
-					resp, err2 = call.Do()
-					return err2
-				})
-			}
+
+			// The internals that perform call.Do automatically retry
+			// requests for us hence no need to add retries here.
+			// See issue https://github.com/googleapis/google-cloud-go/issues/1507.
+			resp, err = call.Do()
 		}
 		if err != nil {
 			w.mu.Lock()
