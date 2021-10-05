@@ -27,6 +27,8 @@ import (
 	sppb "google.golang.org/genproto/googleapis/spanner/v1"
 )
 
+type dummy int
+
 // BatchReadOnlyTransaction is a ReadOnlyTransaction that allows for exporting
 // arbitrarily large amounts of data from Cloud Spanner databases.
 // BatchReadOnlyTransaction partitions a read/query request. Read/query request
